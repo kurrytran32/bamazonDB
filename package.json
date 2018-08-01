@@ -1,0 +1,24 @@
+{
+  "name": "bamazonDB",
+  "version": "1.0.0",
+  "description": "## Find products and items with ease with our Bamazon store app!  After seeing our inventory, you can choose which product to buy by selecting the product id!  If our store does not have the amount of the item you chose, we will let you know promptly.",
+  "main": "bamazon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurrytran32/bamazonDB.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kurrytran32/bamazonDB/issues"
+  },
+  "homepage": "https://github.com/kurrytran32/bamazonDB#readme",
+  "dependencies": {
+    "inquirer": "^6.0.0",
+    "mysql": "^2.16.0"
+  }
+}
