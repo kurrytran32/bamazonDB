@@ -81,6 +81,7 @@ function userSelection() {
                         }
                     ], function(err, res){
                         console.log(`${proName}: ${inventory} left in stock`);
+                        
                         spendMore();
                     }) 
                 } else {
