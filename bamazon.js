@@ -28,12 +28,11 @@ function viewCatalog() {
 
         for (let i = 0; i < res.length; i++) {
 
-            console.log(`${res[i].item_id}: ${res[i].product_name} \nPrice: $${res[i].price}\n`);
+            console.log(`ID: ${res[i].item_id} \nProduct Name: ${res[i].product_name} \nPrice: $${res[i].price}\n`);
             console.log(separator);
 
         }
     })
-    // connection.end();
     //run inquirer for choosing which to buy
     userSelection();
 };
@@ -45,29 +44,73 @@ function userSelection() {
             let items = res[i];
             selectionArray.push(items.product_name);
         }
-        // console.log(selectionArray);
-        inquirer.prompt([
-                {
-                    name: 'userItem',
-                    type: 'rawlist',
-                    message: 'Which would you like to purchase?',
-                    choices: selectionArray,
-                }, 
-                {
-                    message: 'How many would you like to buy?',
-                    type: 'input',
-                    name: 'itemAmount'
-                }
+         inquirer.prompt([
+            {
+                name: 'userItem',
+                type: 'input',
+                message: 'Which would you like to purchase?'
+            },
+            {
+                message: 'How many would you like to buy?',
+                type: 'input',
+                name: 'itemAmount'
+            }
 
-            ]).then(answers => {
-                console.log(answers.userItem);
-                console.log(answers.itemAmount);
-                let item = answers.userItem;
-                let amount = answers.itemAmount;
+        ]).then(answers => {
+            let item = answers.userItem;
+            let amount = answers.itemAmount;
+
+            //starting another connection query to check for info of the item
+            connection.query('SELECT * FROM products WHERE ?', [
+                {
+                    item_id: item
+                }
+            ], function (err, response){
+                if(err) throw err;
+                let inventory = response[0].stock_quantity;
+                let proName = response[0].product_name;
+                if(amount <= inventory){
+                    console.log(`Successfully spent money! \nYou bought ${proName}!`);
+                    console.log('Updating quantity~~~');
+                    connection.query('UPDATE products SET ? WHERE ?', [
+                        {
+                            stock_quantity: inventory - amount
+                        },
+                        {
+                            item_id: item
+                        }
+                    ], function(err, res){
+                        console.log(`${proName}: ${inventory} left in stock`);
+                        spendMore();
+                    }) 
+                } else {
+                    console.log(`Not enough in stock :-( only ${inventory} left...`)
+                    // buy something else
+                    spendMore();
+                }
                 
-                //starting another connection query to check for info of the item
-                connection.query('SELECT * FROM products WHERE ?', {})
+                
             })
+        })
     })
-    connection.end();
+}
+
+//Buy something else function to reloop 
+function spendMore() {
+    inquirer.prompt([
+        {
+            type:'confirm',
+            name: 'repeat',
+            message: 'Would you like to buy something else?'
+        }
+    ]).then(answer => {
+        
+        if(answer.repeat){
+            console.log(`Great! Time to spend more money!`);
+            viewCatalog();
+        } else {
+            console.log('Okay! Please come again soon!');
+            connection.end();
+        }
+    })
 }

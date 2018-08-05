@@ -19,6 +19,7 @@
   "homepage": "https://github.com/kurrytran32/bamazonDB#readme",
   "dependencies": {
     "inquirer": "^6.0.0",
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.3"
   }
 }
